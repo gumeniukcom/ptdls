@@ -1,0 +1,11 @@
+{
+    "name": "gumeniukcom/ptdls",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Stanislav Gumeniuk",
+            "email": "i@gumeniuk.com"
+        }
+    ],
+    "require": {}
+}
