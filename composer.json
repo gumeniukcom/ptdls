@@ -1,6 +1,8 @@
 {
     "name": "gumeniukcom/ptdls",
+    "description": "simple app",
     "type": "project",
+    "license": "MIT",
     "authors": [
         {
             "name": "Stanislav Gumeniuk",
