@@ -20,9 +20,13 @@
         }
     },
     "require-dev": {
-        "overtrue/phplint": "^2.0"
+        "overtrue/phplint": "^2.0",
+        "codeception/codeception": "^4.1",
+        "codeception/module-phpbrowser": "^1.0.0",
+        "codeception/module-asserts": "^1.0.0"
     },
     "scripts": {
+        "tests": "php vendor/bin/codecept run --steps",
         "lint": "./vendor/bin/phplint",
         "noverify": "~/go/bin/noverify -cache-dir=$HOME/tmp/cache/noverify -exclude='vendor/|tests/|tmp/|var/' ./"
     }
