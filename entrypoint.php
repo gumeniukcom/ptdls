@@ -2,4 +2,8 @@
 
 require_once 'vendor/autoload.php';
 
-echo 'Hello world!';
+use Gumeniukcom\Logger\Logger;
+
+$logger = new Logger('pttdls');
+
+$logger->info("App started");

@@ -7,5 +7,21 @@
             "email": "i@gumeniuk.com"
         }
     ],
-    "require": {}
+    "require": {
+        "php": "^7.4.0",
+        "ext-json": "*",
+        "monolog/monolog": "^2.1"
+    },
+    "autoload": {
+        "psr-0": {
+            "Gumeniukcom": "src/"
+        }
+    },
+    "require-dev": {
+        "overtrue/phplint": "^2.0"
+    },
+    "scripts": {
+        "lint": "./vendor/bin/phplint",
+        "noverify": "~/go/bin/noverify -cache-dir=$HOME/tmp/cache/noverify -exclude='vendor/|tests/|tmp/|var/' ./"
+    }
 }
