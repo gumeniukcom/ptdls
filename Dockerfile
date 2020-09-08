@@ -19,9 +19,7 @@ WORKDIR /usr/src/ptdls
 COPY --from=builder /usr/src/ptdls .
 RUN  /go/bin/noverify -cache-dir=$HOME/tmp/cache/noverify -exclude='vendor/|tests/|tmp/|var/' ./
 
-FROM php:7.4-cli-alpine@sha256:b8c0b0e436b6699ba8ca29fa575a4030f90345a30c159a2f27a62780941106e6 as runner
+FROM busybox:1.32.0@sha256:c3dbcbbf6261c620d133312aee9e858b45e1b686efbcead7b34d9aae58a37378 as datacontainer
 
 WORKDIR /usr/src/ptdls
 COPY --from=linterverify /usr/src/ptdls .
-
-CMD [ "php", "./entrypoint.php" ]

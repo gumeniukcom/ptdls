@@ -22,6 +22,10 @@ class BoardInMemoryStorage implements BoardStorage
         $this->logger = $logger;
     }
 
+    /**
+     * @param int $id
+     * @return Board|null
+     */
     public function Load(int $id): ?Board
     {
         $key = self::key($id);
@@ -31,6 +35,10 @@ class BoardInMemoryStorage implements BoardStorage
         return $this->storage[$key];
     }
 
+    /**
+     * @param Board $board
+     * @return bool
+     */
     public function Set(Board $board): bool
     {
         $key = self::key($board->getId());
@@ -43,6 +51,10 @@ class BoardInMemoryStorage implements BoardStorage
         return true;
     }
 
+    /**
+     * @param Board $board
+     * @return bool
+     */
     public function Delete(Board $board): bool
     {
         $key = self::key($board->getId());
@@ -55,6 +67,10 @@ class BoardInMemoryStorage implements BoardStorage
         return true;
     }
 
+    /**
+     * @param string $title
+     * @return Board|null
+     */
     public function New(string $title): ?Board
     {
         $this->storage[self::key(count($this->storage) + 1)] = new Board(count($this->storage) + 1, $title);

@@ -22,6 +22,10 @@ class StatusInMemoryStorage implements StatusStorage
         $this->logger = $logger;
     }
 
+    /**
+     * @param int $id
+     * @return Status|null
+     */
     public function Load(int $id): ?Status
     {
         $key = self::key($id);
@@ -31,6 +35,10 @@ class StatusInMemoryStorage implements StatusStorage
         return $this->storage[$key];
     }
 
+    /**
+     * @param Status $entity
+     * @return bool
+     */
     public function Set(Status $entity): bool
     {
         $key = self::key($entity->getId());
@@ -43,6 +51,10 @@ class StatusInMemoryStorage implements StatusStorage
         return true;
     }
 
+    /**
+     * @param Status $entity
+     * @return bool
+     */
     public function Delete(Status $entity): bool
     {
         $key = self::key($entity->getId());
@@ -55,6 +67,10 @@ class StatusInMemoryStorage implements StatusStorage
         return true;
     }
 
+    /**
+     * @param string $title
+     * @return Status|null
+     */
     public function New(string $title): ?Status
     {
         $this->storage[self::key(count($this->storage) + 1)] = new Status(count($this->storage) + 1, $title);

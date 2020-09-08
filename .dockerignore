@@ -1,2 +1,6 @@
 vendor/
 .phplint.yml
+nginx/
+docker-compose.yml
+Dockerfile
+README.md
