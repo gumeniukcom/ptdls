@@ -72,7 +72,6 @@ class TaskInMemoryStorage implements TaskStorage
     }
 
     /**
-     * @param int $id
      * @param string $title
      * @param Board $board
      * @param Status $status
@@ -80,7 +79,7 @@ class TaskInMemoryStorage implements TaskStorage
      * @param DateTime|null $updatedAt
      * @return Task|null
      */
-    public function New(int $id, string $title, Board $board, Status $status, DateTimeImmutable $createdAt, ?DateTime $updatedAt = null): ?Task
+    public function New(string $title, Board $board, Status $status, DateTimeImmutable $createdAt, ?DateTime $updatedAt = null): ?Task
     {
         $this->storage[self::key(count($this->storage) + 1)] = new Task(count($this->storage) + 1, $title, $board, $status, $createdAt, $updatedAt);
 

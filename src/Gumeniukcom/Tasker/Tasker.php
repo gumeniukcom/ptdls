@@ -4,14 +4,15 @@
 namespace Gumeniukcom\Tasker;
 
 
-
 use Gumeniukcom\ToDo\Board\Board;
 use Gumeniukcom\ToDo\Board\BoardStorage;
+use Gumeniukcom\ToDo\Status\Status;
 use Gumeniukcom\ToDo\Status\StatusStorage;
+use Gumeniukcom\ToDo\Task\Task;
 use Gumeniukcom\ToDo\Task\TaskStorage;
 use Psr\Log\LoggerInterface;
 
-class Tasker implements TaskerInterface
+class Tasker implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterface
 {
     /** @var StatusStorage */
     private StatusStorage $statusStorage;
@@ -60,5 +61,203 @@ class Tasker implements TaskerInterface
         return $board;
     }
 
+    /**
+     * @param string $title
+     * @return Status|null
+     */
+    public function CreateStatus(string $title): ?Status
+    {
+        $status = $this->statusStorage->New($title);
+        if ($status === null) {
+            $this->logger->error("error on get new Status",
+                ['title' => $title]
+            );
+            return null;
+        }
+
+        $this->logger->debug("new status created",
+            ['title' => $title]
+        );
+        return $status;
+    }
+
+    /**
+     * @param string $title
+     * @param Board $board
+     * @param Status $status
+     * @return Task|null
+     */
+    public function CreateTask(string $title, Board $board, Status $status): ?Task
+    {
+        try {
+            $createdAt = new \DateTimeImmutable();
+        } catch (\Exception $e) {
+            $this->logger->error("Error on create data", ['exception' => $e]);
+
+            return null;
+        }
+
+        $task = $this->taskStorage->New($title, $board, $status, $createdAt);
+
+        if ($task === null) {
+            $this->logger->error("error on get new tasks",
+                [
+                    'title' => $title,
+                    'board_id' => $board,
+                    'status_id' => $status,
+                    'created_at' => $createdAt->format(\DateTime::ISO8601),
+                ]
+            );
+            return null;
+        }
+
+        $this->logger->debug("new tasks created",
+            [
+                'title' => $title,
+                'board_id' => $board,
+                'status_id' => $status,
+                'created_at' => $createdAt->format(\DateTime::ISO8601),
+            ]
+        );
+
+        return $task;
+    }
+
+    /**
+     * @param Task $task
+     * @param Status $status
+     * @return bool
+     */
+    public function ChangeTaskStatus(Task $task, Status $status): bool
+    {
+        $oldStatus = $task->getStatus();
+        $task->setStatus($status);
+
+        try {
+            $updatedAt = new \DateTime();
+        } catch (\Exception $e) {
+            $this->logger->error("Error on create data", ['exception' => $e]);
+
+            return false;
+        }
+
+        $task->setUpdatedAt($updatedAt);
+
+        $result = $this->taskStorage->Set($task);
+
+        if (!$result) {
+            $this->logger->error("failed update task status",
+                [
+                    'task_id' => $task->getId(),
+                    'new_status_id' => $status->getId(),
+                    'old_status_id' => $oldStatus->getId(),
+                ]
+            );
+            return false;
+        }
+
+        $this->logger->debug("updated task status",
+            [
+                'task_id' => $task->getId(),
+                'new_status_id' => $status->getId(),
+                'old_status_id' => $oldStatus->getId(),
+            ]
+        );
+
+        return true;
+    }
+
+    /**
+     * @param Task $task
+     * @param string $title
+     * @return bool
+     */
+    public function ChangeTask(Task $task, string $title): bool
+    {
+        $oldTitle = $task->getTitle();
+
+        $task->setTitle($title);
+
+        try {
+            $updatedAt = new \DateTime();
+        } catch (\Exception $e) {
+            $this->logger->error("Error on create data", ['exception' => $e]);
+
+            return false;
+        }
+
+        $task->setUpdatedAt($updatedAt);
+
+        $result = $this->taskStorage->Set($task);
+
+        if (!$result) {
+            $this->logger->error("failed update task",
+                [
+                    'task_id' => $task->getId(),
+                    'new_title' => $title,
+                    'old_title' => $oldTitle,
+                ]
+            );
+            return false;
+        }
+
+        $this->logger->debug("updated task",
+            [
+                'task_id' => $task->getId(),
+                'new_title' => $title,
+                'old_title' => $oldTitle,
+            ]
+        );
+
+        return true;
+    }
+
+    /**
+     * @param int $id
+     * @return Task|null
+     */
+    public function GetTaskById(int $id): ?Task
+    {
+        $task = $this->taskStorage->Load($id);
+        if ($task === null) {
+            $this->logger->info("task not found by id",
+                [
+                    'task_id' => $id,
+                ]
+            );
+            return null;
+        }
+
+        $this->logger->info("task found by id",
+            [
+                'task_id' => $id,
+            ]
+        );
+        return $task;
+    }
+
+    /**
+     * @param Task $task
+     * @return bool
+     */
+    public function DeleteTask(Task $task): bool
+    {
+        $result = $this->taskStorage->Delete($task);
+
+        if ($result === false) {
+            $this->logger->error("error on delete task",
+                [
+                    'task_id' => $task->getId(),
+                ]
+            );
+            return false;
+        }
+        $this->logger->error("deleted task",
+            [
+                'task_id' => $task->getId(),
+            ]
+        );
+        return true;
+    }
 
 }

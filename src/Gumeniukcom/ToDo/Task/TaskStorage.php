@@ -32,7 +32,6 @@ interface TaskStorage
     public function Delete(Task $task): bool;
 
     /**
-     * @param int $id
      * @param string $title
      * @param Board $board
      * @param Status $status
@@ -40,5 +39,5 @@ interface TaskStorage
      * @param DateTime|null $updatedAt
      * @return Task|null
      */
-    public function New(int $id, string $title, Board $board, Status $status, DateTimeImmutable $createdAt, ?DateTime $updatedAt = null): ?Task;
+    public function New(string $title, Board $board, Status $status, DateTimeImmutable $createdAt, ?DateTime $updatedAt = null): ?Task;
 }

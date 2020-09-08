@@ -55,14 +55,6 @@ final class Task extends AbstractIdTitleClass
     }
 
     /**
-     * @return Status
-     */
-    public function getStatus(): Status
-    {
-        return $this->status;
-    }
-
-    /**
      * @return DateTimeImmutable
      */
     public function getCreatedAt(): DateTimeImmutable
@@ -77,5 +69,38 @@ final class Task extends AbstractIdTitleClass
     {
         return $this->updatedAt;
     }
+
+    /**
+     * @param Status $status
+     */
+    public function setStatus(Status $status): void
+    {
+        $this->status = $status;
+    }
+
+    /**
+     * @param DateTime|null $updatedAt
+     */
+    public function setUpdatedAt(?DateTime $updatedAt): void
+    {
+        $this->updatedAt = $updatedAt;
+    }
+
+    /**
+     * @param string $title
+     */
+    public function setTitle(string $title): void
+    {
+        $this->title = $title;
+    }
+
+    /**
+     * @return Status
+     */
+    public function getStatus(): Status
+    {
+        return $this->status;
+    }
+
 
 }
