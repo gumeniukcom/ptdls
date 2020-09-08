@@ -22,7 +22,7 @@ class InitBoardTest extends \Codeception\Test\Unit
 
         $testID = 1;
         $testTitle = "Foobar";
-        $board = new \Gumeniukcom\Tasker\Objects\Board($testID, $testTitle);
+        $board = new \Gumeniukcom\ToDo\Board\Board($testID, $testTitle);
 
         $this->tester->expect("Board id and title equals init value");
 

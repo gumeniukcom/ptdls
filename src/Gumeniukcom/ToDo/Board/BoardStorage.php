@@ -1,10 +1,8 @@
 <?php declare(strict_types=1);
 
 
-namespace Gumeniukcom\Tasker\Storage;
+namespace Gumeniukcom\ToDo\Board;
 
-
-use Gumeniukcom\Tasker\Objects\Board;
 
 interface BoardStorage
 {

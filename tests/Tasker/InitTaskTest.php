@@ -21,18 +21,18 @@ class InitTaskTest extends \Codeception\Test\Unit
         $this->tester->am("System");
         $this->tester->amGoingTo("init Board instance");
 
-        $board = new \Gumeniukcom\Tasker\Objects\Board(1, 'Board title');
+        $board = new \Gumeniukcom\ToDo\Board\Board(1, 'Board title');
 
         $this->tester->amGoingTo("init Status instance");
 
-        $statusNew = new \Gumeniukcom\Tasker\Objects\Status(1, 'New');
+        $statusNew = new \Gumeniukcom\ToDo\Status\Status(1, 'New');
 
         $this->tester->amGoingTo("init task instance");
 
         $createdAt = new DateTimeImmutable('now');
-        $task = new \Gumeniukcom\Tasker\Objects\Task(1, 'Clean home', $board, $statusNew, $createdAt);
+        $task = new \Gumeniukcom\ToDo\Task\Task(1, 'Clean home', $board, $statusNew, $createdAt);
 
-        $this->assertInstanceOf(\Gumeniukcom\Tasker\Objects\Task::class, $task, '$task is instance of Gumeniukcom\Tasker\Objects\Task');
+        $this->assertInstanceOf(\Gumeniukcom\ToDo\Task\Task::class, $task, '$task is instance of Gumeniukcom\Tasker\Objects\Task');
 
         $this->tester->comment("all ok");
 

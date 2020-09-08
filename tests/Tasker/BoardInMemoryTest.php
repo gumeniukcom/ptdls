@@ -24,7 +24,7 @@ class BoardInMemoryTest extends \Codeception\Test\Unit
     // tests
     public function testSomeFeature()
     {
-        $storage = new \Gumeniukcom\Tasker\Storage\BoardInMemoryStorage($this->logger);
+        $storage = new \Gumeniukcom\ToDo\Board\BoardInMemoryStorage($this->logger);
 
         $this->tester->am("System");
 

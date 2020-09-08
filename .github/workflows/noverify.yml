@@ -13,6 +13,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '^1.15.0' # The Go version to download (if necessary) and use.
+      - run: go get -u github.com/VKCOM/noverify
+
+      - uses: actions/checkout@v2
 
       - name: Validate composer.json and composer.lock
         run: composer validate
@@ -25,14 +31,9 @@ jobs:
           key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-php-
+
       - name: Install dependencies
         if: steps.composer-cache.outputs.cache-hit != 'true'
         run: composer install --no-dev --optimize-autoloader
-
-      - uses: actions/checkout@v2
-      - uses: actions/setup-go@v2
-        with:
-          go-version: '^1.15.0' # The Go version to download (if necessary) and use.
-      - run: go get -u github.com/VKCOM/noverify
 
       - run: noverify -cache-dir=$HOME/tmp/cache/noverify -exclude='vendor/|tests/|tmp/|var/' ./

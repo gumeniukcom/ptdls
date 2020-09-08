@@ -22,7 +22,7 @@ class InitStatusTest extends \Codeception\Test\Unit
 
         $statusID = 1;
         $testTitle = "Foobar";
-        $status = new \Gumeniukcom\Tasker\Objects\Status($statusID, $testTitle);
+        $status = new \Gumeniukcom\ToDo\Status\Status($statusID, $testTitle);
 
         $this->tester->expect("Status id and title equals init value");
 

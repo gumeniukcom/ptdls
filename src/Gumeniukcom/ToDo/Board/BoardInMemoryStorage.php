@@ -1,18 +1,17 @@
 <?php declare(strict_types=1);
 
 
-namespace Gumeniukcom\Tasker\Storage;
+namespace Gumeniukcom\ToDo\Board;
 
-
-use Gumeniukcom\Tasker\Objects\Board;
+use Gumeniukcom\AbstractService\InMemoryStorageTrait;
 use Psr\Log\LoggerInterface;
 
 class BoardInMemoryStorage implements BoardStorage
 {
     /** @var LoggerInterface */
-    private LoggerInterface$logger;
+    private LoggerInterface $logger;
 
-    private array $storage = [];
+    use InMemoryStorageTrait;
 
     /**
      * BoardInMemoryStorage constructor.
@@ -63,8 +62,4 @@ class BoardInMemoryStorage implements BoardStorage
         return end($this->storage);
     }
 
-    private static function key(int $id): string
-    {
-        return "o_" . $id;
-    }
 }

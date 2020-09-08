@@ -1,19 +1,17 @@
 <?php declare(strict_types=1);
 
 
-namespace Gumeniukcom\Tasker\Objects;
+namespace Gumeniukcom\ToDo\Task;
 
 
 use DateTimeImmutable;
 use DateTime;
+use Gumeniukcom\AbstractService\AbstractIdTitleClass;
+use Gumeniukcom\ToDo\Board\Board;
+use Gumeniukcom\ToDo\Status\Status;
 
-class Task
+final class Task extends AbstractIdTitleClass
 {
-    /** @var int */
-    private int $id;
-
-    /** @var string */
-    private string $title;
 
     /** @var Board */
     private Board $board;
@@ -28,7 +26,6 @@ class Task
     private ?DateTime $updatedAt;
 
 
-
     /**
      * Task constructor.
      * @param int $id
@@ -41,20 +38,12 @@ class Task
     public function __construct(int $id, string $title, Board $board, Status $status, DateTimeImmutable $createdAt, ?DateTime $updatedAt = null)
     {
 
-        $this->id = $id;
-        $this->title = $title;
         $this->board = $board;
         $this->status = $status;
         $this->createdAt = $createdAt;
         $this->updatedAt = $updatedAt;
-    }
 
-    /**
-     * @return int
-     */
-    public function getId(): int
-    {
-        return $this->id;
+        parent::__construct($id, $title);
     }
 
     /**
@@ -88,14 +77,5 @@ class Task
     {
         return $this->updatedAt;
     }
-
-    /**
-     * @return string
-     */
-    public function getTitle(): string
-    {
-        return $this->title;
-    }
-
 
 }
