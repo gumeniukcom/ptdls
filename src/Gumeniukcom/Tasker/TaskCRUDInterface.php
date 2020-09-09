@@ -16,31 +16,31 @@ interface TaskCRUDInterface
      * @param Status $status
      * @return Task|null
      */
-    public function CreateTask(string $title, Board $board, Status $status): ?Task;
+    public function createTask(string $title, Board $board, Status $status): ?Task;
 
     /**
      * @param Task $task
      * @param Status $status
      * @return bool
      */
-    public function ChangeTaskStatus(Task $task, Status $status): bool;
+    public function changeTaskStatus(Task $task, Status $status): bool;
 
     /**
      * @param Task $task
      * @param string $title
      * @return bool
      */
-    public function ChangeTask(Task $task, string $title): bool;
+    public function changeTask(Task $task, string $title): bool;
 
     /**
      * @param int $id
      * @return Task|null
      */
-    public function GetTaskById(int $id): ?Task;
+    public function getTaskById(int $id): ?Task;
 
     /**
      * @param Task $task
      * @return bool
      */
-    public function DeleteTask(Task $task): bool;
+    public function deleteTask(Task $task): bool;
 }

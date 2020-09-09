@@ -46,14 +46,27 @@ final class Create implements RequestHandlerInterface
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $params = $request->getQueryParams();
+        try {
+            $body = json_decode($request->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
+        } catch (\Exception $e) {
+            $this->logger->error("error on unmarshall json", ['e' => $e->getMessage()]);
+            return $this->error("Error on update", null, null, 500);
+        }
 
-        $title = (string)$params["title"];
+        $this->logger->debug("request body parsed", ['body' => $body]);
+
+        if (!isset($body['title'])) {
+            $this->logger->debug("title empty");
+            return $this->error("Empty title", null, null, 400);
+        }
+
+        $title = (string)$body['title'];
+
         if (strlen($title) < 2) {
             $this->logger->debug("title to short", ['title' => $title]);
             return $this->error("Too short title", null, null, 400);
         }
-        $status = $this->statusCRUD->CreateStatus($title);
+        $status = $this->statusCRUD->createStatus($title);
         if ($status === null) {
             return $this->error("Error on create", null, null, 500);
         }

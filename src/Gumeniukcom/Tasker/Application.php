@@ -8,6 +8,7 @@ use Gumeniukcom\AbstractService\LoggerTrait;
 
 use Gumeniukcom\Handler\REST\Board;
 use Gumeniukcom\Handler\REST\Status;
+use Gumeniukcom\Handler\REST\Task;
 use Gumeniukcom\ToDo\Board\BoardInMemoryStorage;
 use Gumeniukcom\ToDo\Status\StatusInMemoryStorage;
 use Gumeniukcom\ToDo\Task\TaskInMemoryStorage;
@@ -48,7 +49,11 @@ class Application
         $this->statusCRUD = $tasker;
         $this->boardCRUD = $tasker;
         $this->taskCRUD = $tasker;
-
+////
+        $tasker->createBoard("foobar");
+        $tasker->createStatus("New");
+        $tasker->createStatus("WIP");
+        ///
 
 
         $this->initRouter();
@@ -109,6 +114,31 @@ class Application
             'status.delete',
             '/api/status/{id<\d+>}',
             new Status\Delete($this->logger, $this->statusCRUD),
+            $middlewares,
+        );
+
+        $collector->get(
+            'task.get_by_id',
+            '/api/task/{id<\d+>}',
+            new Task\Get($this->logger, $this->taskCRUD),
+            $middlewares
+        );
+        $collector->post(
+            'task.create',
+            '/api/task/',
+            new Task\Create($this->logger, $this->taskCRUD, $this->boardCRUD, $this->statusCRUD),
+            $middlewares,
+        );
+//        $collector->put(
+//            'status.update',
+//            '/api/status/{id<\d+>}',
+//            new Status\Update($this->logger, $this->statusCRUD),
+//            $middlewares,
+//        );
+        $collector->delete(
+            'task.delete',
+            '/api/task/{id<\d+>}',
+            new Task\Delete($this->logger, $this->taskCRUD),
             $middlewares,
         );
 

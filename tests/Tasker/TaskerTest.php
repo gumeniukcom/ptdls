@@ -48,30 +48,30 @@ class TaskerTest extends \Codeception\Test\Unit
         $this->assertNotNull($board);
 
         $this->tester->amGoingTo("Create new Status NEW");
-        $statusNew = $tasker->CreateStatus('NEW');
+        $statusNew = $tasker->createStatus('NEW');
         $this->assertNotNull($statusNew);
 
         $this->tester->amGoingTo("Create new Status WIP");
-        $statusWIP = $tasker->CreateStatus('WIP');
+        $statusWIP = $tasker->createStatus('WIP');
         $this->assertNotNull($statusWIP);
 
         $this->tester->amGoingTo("Create  new TASK");
-        $task = $tasker->CreateTask('Fix home', $board, $statusNew);
+        $task = $tasker->createTask('Fix home', $board, $statusNew);
         $this->assertNotNull($task);
 
         $this->tester->amGoingTo("Create  change task status to WIP");
-        $tasker->ChangeTaskStatus($task, $statusWIP);
+        $tasker->changeTaskStatus($task, $statusWIP);
         $this->assertEquals($statusWIP, $task->getStatus(), "status WIP");
 
         $this->tester->amGoingTo("Create change task title to FOOBAR");
         $newTitle = 'FOOBAR';
-        $result = $tasker->ChangeTask($task, $newTitle);
+        $result = $tasker->changeTask($task, $newTitle);
         $this->tester->assertTrue($result);
         $this->assertEquals($newTitle, $task->getTitle(), "title chaged");
 
         $this->tester->amGoingTo("Load task by id");
         $id = $task->getId();
-        $loadedTask = $tasker->GetTaskById($id);
+        $loadedTask = $tasker->getTaskById($id);
         $this->assertEquals($task, $loadedTask);
 
     }
@@ -88,25 +88,25 @@ class TaskerTest extends \Codeception\Test\Unit
         $this->assertNotNull($board);
 
         $this->tester->amGoingTo("Create new Status NEW");
-        $statusNew = $tasker->CreateStatus('NEW');
+        $statusNew = $tasker->createStatus('NEW');
         $this->assertNotNull($statusNew);
 
         $this->tester->amGoingTo("Create new Status WIP");
-        $statusWIP = $tasker->CreateStatus('WIP');
+        $statusWIP = $tasker->createStatus('WIP');
         $this->assertNotNull($statusWIP);
 
         $this->tester->amGoingTo("Create  new TASK");
-        $task = $tasker->CreateTask('Fix home', $board, $statusNew);
+        $task = $tasker->createTask('Fix home', $board, $statusNew);
         $this->assertNotNull($task);
 
         $id = $task->getId();
 
         $this->tester->amGoingTo("Create delete TASK");
-        $result = $tasker->DeleteTask($task);
+        $result = $tasker->deleteTask($task);
         $this->tester->assertTrue($result);
 
         $this->tester->amGoingTo("Load deletesd task by id");
-        $loadedTask = $tasker->GetTaskById($id);
+        $loadedTask = $tasker->getTaskById($id);
         $this->assertNull($loadedTask);
 
     }

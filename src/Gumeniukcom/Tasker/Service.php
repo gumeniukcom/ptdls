@@ -65,7 +65,7 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
      * @param string $title
      * @return Status|null
      */
-    public function CreateStatus(string $title): ?Status
+    public function createStatus(string $title): ?Status
     {
         $status = $this->statusStorage->New($title);
         if ($status === null) {
@@ -87,7 +87,7 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
      * @param Status $status
      * @return Task|null
      */
-    public function CreateTask(string $title, Board $board, Status $status): ?Task
+    public function createTask(string $title, Board $board, Status $status): ?Task
     {
         try {
             $createdAt = new \DateTimeImmutable();
@@ -128,7 +128,7 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
      * @param Status $status
      * @return bool
      */
-    public function ChangeTaskStatus(Task $task, Status $status): bool
+    public function changeTaskStatus(Task $task, Status $status): bool
     {
         $oldStatus = $task->getStatus();
         $task->setStatus($status);
@@ -172,7 +172,7 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
      * @param string $title
      * @return bool
      */
-    public function ChangeTask(Task $task, string $title): bool
+    public function changeTask(Task $task, string $title): bool
     {
         $oldTitle = $task->getTitle();
 
@@ -216,7 +216,7 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
      * @param int $id
      * @return Task|null
      */
-    public function GetTaskById(int $id): ?Task
+    public function getTaskById(int $id): ?Task
     {
         $task = $this->taskStorage->Load($id);
         if ($task === null) {
@@ -240,7 +240,7 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
      * @param Task $task
      * @return bool
      */
-    public function DeleteTask(Task $task): bool
+    public function deleteTask(Task $task): bool
     {
         $result = $this->taskStorage->Delete($task);
 
