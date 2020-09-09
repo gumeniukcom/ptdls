@@ -9,8 +9,9 @@ use DateTime;
 use Gumeniukcom\AbstractService\AbstractIdTitleClass;
 use Gumeniukcom\ToDo\Board\Board;
 use Gumeniukcom\ToDo\Status\Status;
+use JsonSerializable;
 
-final class Task extends AbstractIdTitleClass
+final class Task extends AbstractIdTitleClass implements JsonSerializable
 {
 
     /** @var Board */
@@ -87,14 +88,6 @@ final class Task extends AbstractIdTitleClass
     }
 
     /**
-     * @param string $title
-     */
-    public function setTitle(string $title): void
-    {
-        $this->title = $title;
-    }
-
-    /**
      * @return Status
      */
     public function getStatus(): Status
@@ -102,5 +95,21 @@ final class Task extends AbstractIdTitleClass
         return $this->status;
     }
 
+    public function jsonSerialize(): array
+    {
+        $data = [
+            'id' => $this->getId(),
+            'title' => $this->getTitle(),
+            'board_id' => $this->getBoard()->getId(),
+            'status_id' => $this->getStatus()->getId(),
+            'created_at' => $this->getCreatedAt()->format(DATE_ISO8601),
+        ];
+
+        if ($this->getUpdatedAt() !== null) {
+            $data['updated_at'] = $this->getUpdatedAt()->format(DATE_ISO8601);
+        }
+
+        return $data;
+    }
 
 }

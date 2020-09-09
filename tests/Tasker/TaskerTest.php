@@ -39,12 +39,12 @@ class TaskerTest extends \Codeception\Test\Unit
     // tests
     public function testSomeFeature()
     {
-        $tasker = new Gumeniukcom\Tasker\Tasker($this->logger, $this->statusStorage, $this->boardStorage, $this->taskStorage);
+        $tasker = new Gumeniukcom\Tasker\Service($this->logger, $this->statusStorage, $this->boardStorage, $this->taskStorage);
 
         $this->tester->am("User");
 
         $this->tester->amGoingTo("Create new Board");
-        $board = $tasker->CreateBoard("New Board");
+        $board = $tasker->createBoard("New Board");
         $this->assertNotNull($board);
 
         $this->tester->amGoingTo("Create new Status NEW");
@@ -79,12 +79,12 @@ class TaskerTest extends \Codeception\Test\Unit
     // tests
     public function testDeleteTask()
     {
-        $tasker = new Gumeniukcom\Tasker\Tasker($this->logger, $this->statusStorage, $this->boardStorage, $this->taskStorage);
+        $tasker = new Gumeniukcom\Tasker\Service($this->logger, $this->statusStorage, $this->boardStorage, $this->taskStorage);
 
         $this->tester->am("User");
 
         $this->tester->amGoingTo("Create new Board");
-        $board = $tasker->CreateBoard("New Board");
+        $board = $tasker->createBoard("New Board");
         $this->assertNotNull($board);
 
         $this->tester->amGoingTo("Create new Status NEW");

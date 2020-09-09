@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Gumeniukcom\Tasker;
+namespace Gumeniukcom\Handler;
 
 
 use Arus\Http\Response\ResponseFactoryAwareTrait;

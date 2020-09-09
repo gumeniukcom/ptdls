@@ -7,6 +7,7 @@ namespace Gumeniukcom\Tasker;
 use Gumeniukcom\AbstractService\LoggerTrait;
 
 use Gumeniukcom\Handler\REST\Board;
+use Gumeniukcom\Handler\REST\Status;
 use Gumeniukcom\ToDo\Board\BoardInMemoryStorage;
 use Gumeniukcom\ToDo\Status\StatusInMemoryStorage;
 use Gumeniukcom\ToDo\Task\TaskInMemoryStorage;
@@ -24,6 +25,12 @@ class Application
 
     private Router $router;
 
+    private BoardCRUDInterface $boardCRUD;
+
+    private StatusCRUDInterface $statusCRUD;
+
+    private TaskCRUDInterface $taskCRUD;
+
     /**
      * Application constructor.
      * @param LoggerInterface $logger
@@ -36,35 +43,72 @@ class Application
         $boardStorage = new BoardInMemoryStorage($this->logger);
         $statusStorage = new StatusInMemoryStorage($this->logger);
         $taskStorage = new TaskInMemoryStorage($this->logger);
-        $tasker = new Tasker($this->logger, $statusStorage, $boardStorage, $taskStorage);
-        ////
-        $tasker->CreateBoard("foobar");
-        $tasker->CreateStatus("New");
-        $tasker->CreateStatus("WIP");
-        ///
+        $tasker = new Service($this->logger, $statusStorage, $boardStorage, $taskStorage);
 
+        $this->statusCRUD = $tasker;
+        $this->boardCRUD = $tasker;
+        $this->taskCRUD = $tasker;
+
+
+
+        $this->initRouter();
+    }
+
+    public function initRouter()
+    {
+        $this->logger->info("start init router");
         $openApi = new OpenApi(new Info('0.0.1', 'API'));
 
         $validator = new RequestBodyValidationMiddleware();
         $middlewares = [$validator];
         $collector = new RouteCollector();
-        $collector->get('board.get_by_id', '/api/board/{id<\d+>}', new Board\Get($this->logger, $tasker), $middlewares);
+        $collector->get(
+            'board.get_by_id',
+            '/api/board/{id<\d+>}',
+            new Board\Get($this->logger, $this->boardCRUD),
+            $middlewares
+        );
         $collector->post(
             'board.create',
             '/api/board/',
-            new Board\Create($this->logger, $tasker),
+            new Board\Create($this->logger, $this->boardCRUD),
             $middlewares,
         );
         $collector->put(
             'board.update',
             '/api/board/{id<\d+>}',
-            new Board\Update($this->logger, $tasker),
+            new Board\Update($this->logger, $this->boardCRUD),
             $middlewares,
         );
         $collector->delete(
             'board.delete',
             '/api/board/{id<\d+>}',
-            new Board\Delete($this->logger, $tasker),
+            new Board\Delete($this->logger, $this->boardCRUD),
+            $middlewares,
+        );
+
+        $collector->get(
+            'status.get_by_id',
+            '/api/status/{id<\d+>}',
+            new Status\Get($this->logger, $this->statusCRUD),
+            $middlewares
+        );
+        $collector->post(
+            'status.create',
+            '/api/status/',
+            new Status\Create($this->logger, $this->statusCRUD),
+            $middlewares,
+        );
+        $collector->put(
+            'status.update',
+            '/api/status/{id<\d+>}',
+            new Status\Update($this->logger, $this->statusCRUD),
+            $middlewares,
+        );
+        $collector->delete(
+            'status.delete',
+            '/api/status/{id<\d+>}',
+            new Status\Delete($this->logger, $this->statusCRUD),
             $middlewares,
         );
 
@@ -74,10 +118,11 @@ class Application
         $openApi->addRoute(...$this->router->getRoutes());
 
         $collectorOpenAPI = new RouteCollector();
-        $collectorOpenAPI->get('docs', '/docs', new \Gumeniukcom\Tasker\OpenAPI($this->logger, $openApi));
+        $collectorOpenAPI->get('apidocs', '/apidocs', new \Gumeniukcom\Handler\OpenAPI($this->logger, $openApi));
         $this->router->addRoute(...$collectorOpenAPI->getCollection()->all());
-    }
 
+        $this->logger->info("end init router");
+    }
 
     public function run()
     {

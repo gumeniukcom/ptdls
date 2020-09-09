@@ -1,51 +1,38 @@
 <?php declare(strict_types=1);
 
 
-namespace Gumeniukcom\Handler\REST\Board;
+namespace Gumeniukcom\Handler\REST\Status;
 
 
 use Arus\Http\Response\ResponseFactoryAwareTrait;
 use Gumeniukcom\AbstractService\LoggerTrait;
 use Gumeniukcom\Tasker\BoardCRUDInterface;
+use Gumeniukcom\Tasker\StatusCRUDInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 
-/**
- * @Route(
- *   name="apiBoardCreate",
- *   path="/api/board/",
- *   methods={"POST"},
- *   middlewares={
- *   },
- *   attributes={
- *   },
- *   summary="Create board",
- *   description="Some description",
- *   tags={"api", "board"},
- *   priority=0,
- * )
- */
+
 final class Create implements RequestHandlerInterface
 {
     use ResponseFactoryAwareTrait;
     use LoggerTrait;
 
     /**
-     * @var BoardCRUDInterface
+     * @var StatusCRUDInterface
      */
-    private BoardCRUDInterface $boardCRUD;
+    private StatusCRUDInterface $statusCRUD;
 
     /**
      * Get constructor.
      * @param LoggerInterface $logger
-     * @param BoardCRUDInterface $boardCRUD
+     * @param StatusCRUDInterface $statusCRUD
      */
-    public function __construct(LoggerInterface $logger, BoardCRUDInterface $boardCRUD)
+    public function __construct(LoggerInterface $logger, StatusCRUDInterface $statusCRUD)
     {
         $this->logger = $logger;
-        $this->boardCRUD = $boardCRUD;
+        $this->statusCRUD = $statusCRUD;
     }
 
 
@@ -59,7 +46,6 @@ final class Create implements RequestHandlerInterface
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-
         $params = $request->getQueryParams();
 
         $title = (string)$params["title"];
@@ -67,15 +53,15 @@ final class Create implements RequestHandlerInterface
             $this->logger->debug("title to short", ['title' => $title]);
             return $this->error("Too short title", null, null, 400);
         }
-        $board = $this->boardCRUD->createBoard($title);
-        if ($board === null) {
+        $status = $this->statusCRUD->CreateStatus($title);
+        if ($status === null) {
             return $this->error("Error on create", null, null, 500);
         }
-        $this->logger->debug("board created",
+        $this->logger->debug("status created",
             [
                 'title' => $title,
-                'board' => $board,
+                'status' => $status,
             ]);
-        return $this->json($board, 201);
+        return $this->json($status, 201);
     }
 }

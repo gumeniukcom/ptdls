@@ -39,6 +39,14 @@ abstract class AbstractIdTitleClass
         return $this->title;
     }
 
+    /**
+     * @param string $title
+     */
+    public function setTitle(string $title): void
+    {
+        $this->title = $title;
+    }
+
     public function jsonSerialize()
     {
         return [

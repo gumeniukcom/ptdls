@@ -13,7 +13,7 @@ use Gumeniukcom\ToDo\Task\Task;
 use Gumeniukcom\ToDo\Task\TaskStorage;
 use Psr\Log\LoggerInterface;
 
-class Tasker implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterface
+class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterface
 {
     use LoggerTrait;
 
@@ -27,7 +27,7 @@ class Tasker implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterfa
     private TaskStorage $taskStorage;
 
     /**
-     * Tasker constructor.
+     * Service constructor.
      * @param LoggerInterface $logger
      * @param StatusStorage $statusStorage
      * @param BoardStorage $boardStorage
@@ -45,7 +45,7 @@ class Tasker implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterfa
      * @param string $title
      * @return Board|null
      */
-    public function CreateBoard(string $title): ?Board
+    public function createBoard(string $title): ?Board
     {
         $board = $this->boardStorage->New($title);
         if ($board === null) {
@@ -330,6 +330,90 @@ class Tasker implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterfa
         $this->logger->error("deleted task",
             [
                 'board_id' => $board->getId(),
+            ]
+        );
+        return true;
+    }
+
+    /**
+     * @param int $id
+     * @return Status|null
+     */
+    public function getStatusById(int $id): ?Status
+    {
+        $status = $this->statusStorage->Load($id);
+
+        if ($status === null) {
+            $this->logger->info("status not found by id",
+                [
+                    'status_id' => $id,
+                ]
+            );
+            return null;
+        }
+
+        $this->logger->info("status found by id",
+            [
+                'status_id' => $id,
+            ]
+        );
+        return $status;
+    }
+
+    /**
+     * @param Status $status
+     * @param string $title
+     * @return bool
+     */
+    public function changeStatus(Status $status, string $title): bool
+    {
+        $oldTitle = $status->getTitle();
+
+        $status->setTitle($title);
+
+        $result = $this->statusStorage->Set($status);
+
+        if (!$result) {
+            $this->logger->error("failed update task",
+                [
+                    'status_id' => $status->getId(),
+                    'new_title' => $title,
+                    'old_title' => $oldTitle,
+                ]
+            );
+            return false;
+        }
+
+        $this->logger->debug("updated task",
+            [
+                'status_id' => $status->getId(),
+                'new_title' => $title,
+                'old_title' => $oldTitle,
+            ]
+        );
+
+        return true;
+    }
+
+    /**
+     * @param Status $status
+     * @return bool
+     */
+    public function deleteStatus(Status $status): bool
+    {
+        $result = $this->statusStorage->Delete($status);
+
+        if ($result === false) {
+            $this->logger->error("error on delete status",
+                [
+                    'status_id' => $status->getId(),
+                ]
+            );
+            return false;
+        }
+        $this->logger->error("deleted status",
+            [
+                'status_id' => $status->getId(),
             ]
         );
         return true;

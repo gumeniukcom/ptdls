@@ -14,7 +14,7 @@ interface BoardCRUDInterface
      * @param string $title
      * @return Board|null
      */
-    public function CreateBoard(string $title): ?Board;
+    public function createBoard(string $title): ?Board;
 
     /**
      * @param int $id
