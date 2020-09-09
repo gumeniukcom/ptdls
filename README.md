@@ -1,6 +1,12 @@
 # ptdls
 
 
+## Documentation
+
+###Postman
+
+Import file `ptdls.postman_collection.json` to postman
+
 ## Container
 
 ### Dockerfile
