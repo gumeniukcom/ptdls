@@ -8,7 +8,8 @@ $logger = new Logger('pttdls');
 
 $logger->info("App started");
 
-echo "Hello world!";
+$app = new \Gumeniukcom\Tasker\Application($logger);
+$app->run();
 
 $logger->info("App finished");
 

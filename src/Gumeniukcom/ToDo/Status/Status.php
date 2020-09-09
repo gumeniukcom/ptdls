@@ -5,8 +5,8 @@ namespace Gumeniukcom\ToDo\Status;
 
 
 use Gumeniukcom\AbstractService\AbstractIdTitleClass;
+use JsonSerializable;
 
-final class Status extends AbstractIdTitleClass
+final class Status extends AbstractIdTitleClass implements JsonSerializable
 {
-
 }

@@ -4,6 +4,7 @@
 namespace Gumeniukcom\Tasker;
 
 
+use Gumeniukcom\AbstractService\LoggerTrait;
 use Gumeniukcom\ToDo\Board\Board;
 use Gumeniukcom\ToDo\Board\BoardStorage;
 use Gumeniukcom\ToDo\Status\Status;
@@ -14,6 +15,8 @@ use Psr\Log\LoggerInterface;
 
 class Tasker implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterface
 {
+    use LoggerTrait;
+
     /** @var StatusStorage */
     private StatusStorage $statusStorage;
 
@@ -22,9 +25,6 @@ class Tasker implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterfa
 
     /** @var TaskStorage */
     private TaskStorage $taskStorage;
-
-    /** @var LoggerInterface */
-    private LoggerInterface $logger;
 
     /**
      * Tasker constructor.
@@ -260,4 +260,78 @@ class Tasker implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterfa
         return true;
     }
 
+    public function getBoardById(int $id): ?Board
+    {
+        $board = $this->boardStorage->Load($id);
+
+        if ($board === null) {
+            $this->logger->info("board not found by id",
+                [
+                    'board_id' => $id,
+                ]
+            );
+            return null;
+        }
+
+        $this->logger->info("board found by id",
+            [
+                'board_id' => $id,
+            ]
+        );
+        return $board;
+    }
+
+    public function changeBoard(Board $board, string $title): bool
+    {
+        $oldTitle = $board->getTitle();
+
+        $board->setTitle($title);
+
+        $result = $this->boardStorage->Set($board);
+
+        if (!$result) {
+            $this->logger->error("failed update task",
+                [
+                    'board_id' => $board->getId(),
+                    'new_title' => $title,
+                    'old_title' => $oldTitle,
+                ]
+            );
+            return false;
+        }
+
+        $this->logger->debug("updated task",
+            [
+                'board_id' => $board->getId(),
+                'new_title' => $title,
+                'old_title' => $oldTitle,
+            ]
+        );
+
+        return true;
+    }
+
+    /**
+     * @param Board $board
+     * @return bool
+     */
+    public function deleteBoard(Board $board): bool
+    {
+        $result = $this->boardStorage->Delete($board);
+
+        if ($result === false) {
+            $this->logger->error("error on delete board",
+                [
+                    'board_id' => $board->getId(),
+                ]
+            );
+            return false;
+        }
+        $this->logger->error("deleted task",
+            [
+                'board_id' => $board->getId(),
+            ]
+        );
+        return true;
+    }
 }

@@ -39,4 +39,12 @@ abstract class AbstractIdTitleClass
         return $this->title;
     }
 
+    public function jsonSerialize()
+    {
+        return [
+            'id' => $this->getId(),
+            'title' => $this->getTitle(),
+        ];
+    }
+
 }

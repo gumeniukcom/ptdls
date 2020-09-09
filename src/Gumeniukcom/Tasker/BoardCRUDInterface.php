@@ -15,4 +15,23 @@ interface BoardCRUDInterface
      * @return Board|null
      */
     public function CreateBoard(string $title): ?Board;
+
+    /**
+     * @param int $id
+     * @return Board|null
+     */
+    public function getBoardById(int $id): ?Board;
+
+    /**
+     * @param Board $board
+     * @param string $title
+     * @return bool
+     */
+    public function changeBoard(Board $board, string $title): bool;
+
+    /**
+     * @param Board $board
+     * @return bool
+     */
+    public function deleteBoard(Board $board): bool;
 }
