@@ -32,8 +32,19 @@ interface StatusCRUDInterface
     public function changeStatus(Status $status, string $title): bool;
 
     /**
-     * @param Board $stat
+     * @param Status $stat
      * @return bool
      */
     public function deleteStatus(Status $stat): bool;
+
+    /**
+     * @return Status[]
+     */
+    public function getStatusList(): array;
+
+    /**
+     * @param int $boardId
+     * @return Status[]
+     */
+    public function getStatusListByBoardId(int $boardId): array;
 }

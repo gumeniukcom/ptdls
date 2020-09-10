@@ -25,7 +25,7 @@ class InitTaskTest extends \Codeception\Test\Unit
 
         $this->tester->amGoingTo("init Status instance");
 
-        $statusNew = new \Gumeniukcom\ToDo\Status\Status(1, 'New', $board);
+        $statusNew = new \Gumeniukcom\ToDo\Status\Status(1, 'New', $board->getId());
 
         $this->tester->amGoingTo("init task instance");
 

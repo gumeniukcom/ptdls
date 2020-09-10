@@ -68,7 +68,7 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
      */
     public function createStatus(string $title, Board $board): ?Status
     {
-        $status = $this->statusStorage->New($title, $board);
+        $status = $this->statusStorage->new($title, $board->getId());
         if ($status === null) {
             $this->logger->error("error on get new Status",
                 ['title' => $title]
@@ -261,6 +261,10 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
         return true;
     }
 
+    /**
+     * @param int $id
+     * @return Board|null
+     */
     public function getBoardById(int $id): ?Board
     {
         $board = $this->boardStorage->load($id);
@@ -282,6 +286,11 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
         return $board;
     }
 
+    /**
+     * @param Board $board
+     * @param string $title
+     * @return bool
+     */
     public function changeBoard(Board $board, string $title): bool
     {
         $oldTitle = $board->getTitle();
@@ -291,7 +300,7 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
         $result = $this->boardStorage->set($board);
 
         if (!$result) {
-            $this->logger->error("failed update task",
+            $this->logger->error("failed update board",
                 [
                     'board_id' => $board->getId(),
                     'new_title' => $title,
@@ -342,7 +351,7 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
      */
     public function getStatusById(int $id): ?Status
     {
-        $status = $this->statusStorage->Load($id);
+        $status = $this->statusStorage->load($id);
 
         if ($status === null) {
             $this->logger->info("status not found by id",
@@ -372,10 +381,10 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
 
         $status->setTitle($title);
 
-        $result = $this->statusStorage->Set($status);
+        $result = $this->statusStorage->set($status);
 
         if (!$result) {
-            $this->logger->error("failed update task",
+            $this->logger->error("failed update status",
                 [
                     'status_id' => $status->getId(),
                     'new_title' => $title,
@@ -402,7 +411,7 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
      */
     public function deleteStatus(Status $status): bool
     {
-        $result = $this->statusStorage->Delete($status);
+        $result = $this->statusStorage->delete($status);
 
         if ($result === false) {
             $this->logger->error("error on delete status",
@@ -427,9 +436,51 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
     {
         $result = $this->boardStorage->all();
 
-        $this->logger->error("deleted status",
+        $this->logger->error("get all board",
             [
                 'board_count' => count($result),
+            ]
+        );
+
+        return $result;
+    }
+
+    /**
+     * @return Status[]
+     */
+    public function getStatusList(): array
+    {
+        $result = $this->statusStorage->all();
+
+        $this->logger->error("get all status",
+            [
+                'status_count' => count($result),
+            ]
+        );
+
+        return $result;
+    }
+
+    /**
+     * @param int $boardId
+     * @return Status[]
+     */
+    public function getStatusListByBoardId(int $boardId): array
+    {
+        $board = $this->boardStorage->load($boardId);
+        if ($board === null) {
+            $this->logger->error("board not found",
+            [
+                'board_id' => $boardId,
+            ]);
+            return [];
+        }
+        $result = $this->statusStorage->allByBoardId($boardId);
+
+        $this->logger->error("get all status",
+            [
+                'status_count' => count($result),
+                'board_id' => $boardId,
             ]
         );
 

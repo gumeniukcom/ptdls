@@ -50,8 +50,7 @@ class BoardRedisStorage implements BoardStorage
     public function set(Board $board): bool
     {
         $boardJson = $board->jsonSerialize();
-        $this->redis->hMSet(self::key($board->getId()), $boardJson);
-        return false;
+        return $this->redis->hMSet(self::key($board->getId()), $boardJson);
     }
 
     /**

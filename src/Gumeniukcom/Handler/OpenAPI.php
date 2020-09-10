@@ -29,6 +29,10 @@ class OpenAPI implements RequestHandlerInterface
         $this->logger = $logger;
     }
 
+    /**
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
+     */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         return $this->json($this->openapi->toArray());

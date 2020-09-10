@@ -95,6 +95,9 @@ final class Task extends AbstractIdTitleClass implements JsonSerializable
         return $this->status;
     }
 
+    /**
+     * @return array
+     */
     public function jsonSerialize(): array
     {
         $data = [

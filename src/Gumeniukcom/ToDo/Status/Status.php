@@ -10,30 +10,48 @@ use JsonSerializable;
 
 final class Status extends AbstractIdTitleClass implements JsonSerializable
 {
-    /** @var Board */
-    private Board $board;
 
-    public function __construct(int $id, string $title, Board $board)
+    const FIELD_BOARD_ID = 'board_id';
+
+    /** @var int */
+    private int $boardId;
+
+    public function __construct(int $id, string $title, int $boardId)
     {
-        $this->board = $board;
+        $this->boardId = $boardId;
         parent::__construct($id, $title);
     }
 
     /**
-     * @return Board
+     * @return int
      */
-    public function getBoard(): Board
+    public function getBoardId(): int
     {
-        return $this->board;
+        return $this->boardId;
     }
 
+    /**
+     * @return array|mixed
+     */
     public function jsonSerialize()
     {
         return [
-            'id' => $this->getId(),
-            'title' => $this->getTitle(),
-            'board_id' => $this->getBoard()->getId(),
+            self::FIELD_ID => $this->getId(),
+            self::FIELD_TITLE => $this->getTitle(),
+            self::FIELD_BOARD_ID => $this->getBoardId(),
         ];
     }
 
+    /**
+     * @param array $arr
+     * @return Status|null
+     */
+    public static function fromArray(array $arr): ?Status
+    {
+        if (count($arr) === 0) {
+            return null;
+        }
+
+        return new Status((int)$arr[Status::FIELD_ID], $arr[Status::FIELD_TITLE], (int)$arr[Status::FIELD_BOARD_ID]);
+    }
 }

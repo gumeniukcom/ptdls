@@ -12,25 +12,36 @@ interface StatusStorage
      * @param int $id
      * @return Status|null
      */
-    public function Load(int $id): ?Status;
+    public function load(int $id): ?Status;
 
 
     /**
      * @param Status $status
      * @return bool
      */
-    public function Set(Status $status): bool;
+    public function set(Status $status): bool;
 
     /**
      * @param Status $status
      * @return bool
      */
-    public function Delete(Status $status): bool;
+    public function delete(Status $status): bool;
 
     /**
      * @param string $title
-     * @param Board $board
+     * @param int $boardId
      * @return Status|null
      */
-    public function New(string $title, Board $board): ?Status;
+    public function new(string $title, int $boardId): ?Status;
+
+    /**
+     * @param int $boardId
+     * @return Status[]
+     */
+    public function allByBoardId(int $boardId): array;
+
+    /**
+     * @return Status[]
+     */
+    public function all(): array;
 }

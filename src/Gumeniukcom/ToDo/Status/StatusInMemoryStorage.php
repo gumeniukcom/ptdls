@@ -27,7 +27,7 @@ class StatusInMemoryStorage implements StatusStorage
      * @param int $id
      * @return Status|null
      */
-    public function Load(int $id): ?Status
+    public function load(int $id): ?Status
     {
         $key = self::key($id);
         if (!isset($this->storage[$key])) {
@@ -40,7 +40,7 @@ class StatusInMemoryStorage implements StatusStorage
      * @param Status $entity
      * @return bool
      */
-    public function Set(Status $entity): bool
+    public function set(Status $entity): bool
     {
         $key = self::key($entity->getId());
         if (!isset($this->storage[$key])) {
@@ -56,7 +56,7 @@ class StatusInMemoryStorage implements StatusStorage
      * @param Status $entity
      * @return bool
      */
-    public function Delete(Status $entity): bool
+    public function delete(Status $entity): bool
     {
         $key = self::key($entity->getId());
         if (!isset($this->storage[$key])) {
@@ -70,14 +70,38 @@ class StatusInMemoryStorage implements StatusStorage
 
     /**
      * @param string $title
-     * @param Board $board
+     * @param int $boardId
      * @return Status|null
      */
-    public function New(string $title, Board $board): ?Status
+    public function new(string $title, int $boardId): ?Status
     {
-        $this->storage[self::key(count($this->storage) + 1)] = new Status(count($this->storage,) + 1, $title, $board);
+        $this->storage[self::key(count($this->storage) + 1)] = new Status(count($this->storage,) + 1, $title, $boardId);
 
         return end($this->storage);
     }
 
+    /**
+     * @param int $boardId
+     * @return Status[]
+     */
+    public function allByBoardId(int $boardId): array
+    {
+        $res = [];
+        /** @var Status $item */
+        foreach ($this->storage as $item) {
+            if ($item->getBoardId() == $boardId) {
+                $res[] = $item;
+            }
+        }
+
+        return $res;
+    }
+
+    /**
+     * @return Status[]
+     */
+    public function all(): array
+    {
+        return $this->storage;
+    }
 }

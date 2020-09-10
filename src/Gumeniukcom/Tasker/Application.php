@@ -12,6 +12,7 @@ use Gumeniukcom\Handler\REST\Task;
 use Gumeniukcom\ToDo\Board\BoardInMemoryStorage;
 use Gumeniukcom\ToDo\Board\BoardRedisStorage;
 use Gumeniukcom\ToDo\Status\StatusInMemoryStorage;
+use Gumeniukcom\ToDo\Status\StatusRedisStorage;
 use Gumeniukcom\ToDo\Task\TaskInMemoryStorage;
 use Psr\Log\LoggerInterface;
 use Redis;
@@ -62,7 +63,7 @@ class Application
         }
 
         $boardStorage = new BoardRedisStorage($this->logger, $redis);
-        $statusStorage = new StatusInMemoryStorage($this->logger);
+        $statusStorage = new StatusRedisStorage($this->logger, $redis);
         $taskStorage = new TaskInMemoryStorage($this->logger);
         $tasker = new Service($this->logger, $statusStorage, $boardStorage, $taskStorage);
 
@@ -74,6 +75,9 @@ class Application
         $this->initRouter();
     }
 
+    /**
+     * Init Routes
+     */
     public function initRouter()
     {
         $this->logger->info("start init router");
@@ -113,6 +117,19 @@ class Application
             $middlewares,
         );
 
+        $collector->get(
+            'board.get_by_id.statuses',
+            '/api/board/{id<\d+>}/status',
+            new Status\AllByBoardId($this->logger, $this->statusCRUD),
+            $middlewares
+        );
+
+        $collector->get(
+            'status.all',
+            '/api/status/',
+            new Status\All($this->logger, $this->statusCRUD),
+            $middlewares
+        );
         $collector->get(
             'status.get_by_id',
             '/api/status/{id<\d+>}',
@@ -175,6 +192,9 @@ class Application
         $this->logger->info("end init router");
     }
 
+    /**
+     * Run application
+     */
     public function run()
     {
         $request = ServerRequestFactory::fromGlobals();

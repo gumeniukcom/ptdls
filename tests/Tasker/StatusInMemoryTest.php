@@ -33,14 +33,14 @@ class StatusInMemoryTest extends \Codeception\Test\Unit
 
         $board = new Gumeniukcom\ToDo\Board\Board(1, 'new board');
 
-        $status = $storage->New($title1, $board);
+        $status = $storage->New($title1, $board->getId());
 
         $this->assertEquals(1, $status->getId(), "id1");
 
         $this->assertEquals($title1, $status->getTitle(), "title1");
 
 
-        $status22 = $storage->New($title2, $board);
+        $status22 = $storage->New($title2, $board->getId());
 
         $this->assertEquals(2, $status22->getId(), "id2");
 

@@ -50,6 +50,9 @@ abstract class AbstractIdTitleClass
         $this->title = $title;
     }
 
+    /**
+     * @return array
+     */
     public function jsonSerialize()
     {
         return [

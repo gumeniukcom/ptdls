@@ -24,13 +24,13 @@ class InitStatusTest extends \Codeception\Test\Unit
 
         $statusID = 1;
         $testTitle = "Foobar";
-        $status = new \Gumeniukcom\ToDo\Status\Status($statusID, $testTitle, $board);
+        $status = new \Gumeniukcom\ToDo\Status\Status($statusID, $testTitle, $board->getId());
 
         $this->tester->expect("Status id and title equals init value");
 
         $this->assertEquals($statusID, $status->getId(), "id equals");
         $this->assertEquals($testTitle, $status->getTitle(), "title equals");
-        $this->assertEquals($board->getId(), $status->getBoard()->getId(), "board id equals");
+        $this->assertEquals($board->getId(), $status->getBoardId(), "board id equals");
 
         $this->tester->comment("all ok");
     }
