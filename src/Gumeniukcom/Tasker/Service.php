@@ -90,15 +90,8 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
      */
     public function createTask(string $title, Board $board, Status $status): ?Task
     {
-        try {
-            $createdAt = new \DateTimeImmutable();
-        } catch (\Exception $e) {
-            $this->logger->error("Error on create data", ['exception' => $e]);
 
-            return null;
-        }
-
-        $task = $this->taskStorage->new($title, $board->getId(), $status->getId(), $createdAt);
+        $task = $this->taskStorage->new($title, $board->getId(), $status->getId());
 
         if ($task === null) {
             $this->logger->error("error on get new tasks",
@@ -106,7 +99,6 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
                     'title' => $title,
                     'board_id' => $board,
                     'status_id' => $status,
-                    'created_at' => $createdAt->format(\DateTime::ISO8601),
                 ]
             );
             return null;
@@ -117,7 +109,6 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
                 'title' => $title,
                 'board_id' => $board,
                 'status_id' => $status,
-                'created_at' => $createdAt->format(\DateTime::ISO8601),
             ]
         );
 
@@ -144,7 +135,7 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
 
         $task->setUpdatedAt($updatedAt);
 
-        $result = $this->taskStorage->set($task);
+        $result = $this->taskStorage->set($task, $oldStatus);
 
         if (!$result) {
             $this->logger->error("failed update task status",
@@ -170,14 +161,23 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
 
     /**
      * @param Task $task
-     * @param string $title
+     * @param string|null $title
+     * @param int|null $statusId
      * @return bool
      */
-    public function changeTask(Task $task, string $title): bool
+    public function changeTask(Task $task, ?string $title = null, ?int $statusId = null): bool
     {
         $oldTitle = $task->getTitle();
+        $oldStatusId = $task->getStatusId();
 
-        $task->setTitle($title);
+        if ($title !== null) {
+            $task->setTitle($title);
+        }
+
+        if ($statusId !== null) {
+            $task->setStatusId($statusId);
+        }
+
 
         try {
             $updatedAt = new \DateTime();
@@ -189,7 +189,7 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
 
         $task->setUpdatedAt($updatedAt);
 
-        $result = $this->taskStorage->set($task);
+        $result = $this->taskStorage->set($task, $oldStatusId);
 
         if (!$result) {
             $this->logger->error("failed update task",
@@ -207,6 +207,8 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
                 'task_id' => $task->getId(),
                 'new_title' => $title,
                 'old_title' => $oldTitle,
+                'new_status_id' => $statusId,
+                'old_status_id' => $oldStatusId,
             ]
         );
 
@@ -221,7 +223,7 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
     {
         $task = $this->taskStorage->load($id);
         if ($task === null) {
-            $this->logger->info("task not found by id",
+            $this->logger->error("task not found by id",
                 [
                     'task_id' => $id,
                 ]
@@ -253,7 +255,7 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
             );
             return false;
         }
-        $this->logger->error("deleted task",
+        $this->logger->info("deleted task",
             [
                 'task_id' => $task->getId(),
             ]
@@ -270,7 +272,7 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
         $board = $this->boardStorage->load($id);
 
         if ($board === null) {
-            $this->logger->info("board not found by id",
+            $this->logger->error("board not found by id",
                 [
                     'board_id' => $id,
                 ]
@@ -337,7 +339,7 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
             );
             return false;
         }
-        $this->logger->error("deleted task",
+        $this->logger->info("deleted task",
             [
                 'board_id' => $board->getId(),
             ]
@@ -354,7 +356,7 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
         $status = $this->statusStorage->load($id);
 
         if ($status === null) {
-            $this->logger->info("status not found by id",
+            $this->logger->error("status not found by id",
                 [
                     'status_id' => $id,
                 ]
@@ -421,7 +423,7 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
             );
             return false;
         }
-        $this->logger->error("deleted status",
+        $this->logger->info("deleted status",
             [
                 'status_id' => $status->getId(),
             ]
@@ -436,7 +438,7 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
     {
         $result = $this->boardStorage->all();
 
-        $this->logger->error("get all board",
+        $this->logger->info("get all board",
             [
                 'board_count' => count($result),
             ]
@@ -452,7 +454,7 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
     {
         $result = $this->statusStorage->all();
 
-        $this->logger->error("get all status",
+        $this->logger->info("get all status",
             [
                 'status_count' => count($result),
             ]
@@ -470,17 +472,85 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
         $board = $this->boardStorage->load($boardId);
         if ($board === null) {
             $this->logger->error("board not found",
-            [
-                'board_id' => $boardId,
-            ]);
+                [
+                    'board_id' => $boardId,
+                ]);
             return [];
         }
         $result = $this->statusStorage->allByBoardId($boardId);
 
-        $this->logger->error("get all status",
+        $this->logger->info("get all status",
             [
                 'status_count' => count($result),
                 'board_id' => $boardId,
+            ]
+        );
+
+        return $result;
+    }
+
+    /**
+     * @return Task[]
+     */
+    public function getTaskList(): array
+    {
+        $result = $this->taskStorage->all();
+
+        $this->logger->info("get all status",
+            [
+                'task_count' => count($result),
+            ]
+        );
+
+        return $result;
+    }
+
+    /**
+     * @param int $boardId
+     * @return Task[]
+     */
+    public function getTaskListByBoardId(int $boardId): array
+    {
+        $board = $this->boardStorage->load($boardId);
+        if ($board === null) {
+            $this->logger->error("board not found",
+                [
+                    'board_id' => $boardId,
+                ]);
+            return [];
+        }
+        $result = $this->taskStorage->allByBoardId($boardId);
+
+        $this->logger->info("get all status",
+            [
+                'task_count' => count($result),
+                'board_id' => $boardId,
+            ]
+        );
+
+        return $result;
+    }
+
+    /**
+     * @param int $statusId
+     * @return Task[]
+     */
+    public function getTaskListByStatusId(int $statusId): array
+    {
+        $status = $this->statusStorage->load($statusId);
+        if ($status === null) {
+            $this->logger->error("board not found",
+                [
+                    'status_id' => $statusId,
+                ]);
+            return [];
+        }
+        $result = $this->taskStorage->allByStatusId($statusId);
+
+        $this->logger->info("get all status",
+            [
+                'task_count' => count($result),
+                'status_id' => $statusId,
             ]
         );
 

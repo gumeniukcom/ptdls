@@ -20,7 +20,7 @@ class BoardRedisStorage implements BoardStorage
     use RedisStorageTrait;
 
     /**
-     * BoardInMemoryStorage constructor.
+     * BoardRedisStorage constructor.
      * @param LoggerInterface $logger
      * @param Redis $redis
      */

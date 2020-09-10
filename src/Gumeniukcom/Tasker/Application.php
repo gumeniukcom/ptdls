@@ -9,11 +9,9 @@ use Gumeniukcom\AbstractService\LoggerTrait;
 use Gumeniukcom\Handler\REST\Board;
 use Gumeniukcom\Handler\REST\Status;
 use Gumeniukcom\Handler\REST\Task;
-use Gumeniukcom\ToDo\Board\BoardInMemoryStorage;
 use Gumeniukcom\ToDo\Board\BoardRedisStorage;
-use Gumeniukcom\ToDo\Status\StatusInMemoryStorage;
 use Gumeniukcom\ToDo\Status\StatusRedisStorage;
-use Gumeniukcom\ToDo\Task\TaskInMemoryStorage;
+use Gumeniukcom\ToDo\Task\TaskRedisStorage;
 use Psr\Log\LoggerInterface;
 use Redis;
 use Sunrise\Http\Router\OpenApi\Middleware\RequestBodyValidationMiddleware;
@@ -64,7 +62,7 @@ class Application
 
         $boardStorage = new BoardRedisStorage($this->logger, $redis);
         $statusStorage = new StatusRedisStorage($this->logger, $redis);
-        $taskStorage = new TaskInMemoryStorage($this->logger);
+        $taskStorage = new TaskRedisStorage($this->logger, $redis);
         $tasker = new Service($this->logger, $statusStorage, $boardStorage, $taskStorage);
 
         $this->statusCRUD = $tasker;
@@ -123,6 +121,12 @@ class Application
             new Status\AllByBoardId($this->logger, $this->statusCRUD),
             $middlewares
         );
+        $collector->get(
+            'board.get_by_id.task',
+            '/api/board/{id<\d+>}/task',
+            new Task\AllByBoardId($this->logger, $this->statusCRUD),
+            $middlewares
+        );
 
         $collector->get(
             'status.all',
@@ -134,6 +138,12 @@ class Application
             'status.get_by_id',
             '/api/status/{id<\d+>}',
             new Status\Get($this->logger, $this->statusCRUD),
+            $middlewares
+        );
+        $collector->get(
+            'status.get_by_id.task',
+            '/api/status/{id<\d+>}/task',
+            new Task\AllByStatusId($this->logger, $this->statusCRUD),
             $middlewares
         );
         $collector->post(
@@ -156,6 +166,12 @@ class Application
         );
 
         $collector->get(
+            'task.all',
+            '/api/task/',
+            new Task\All($this->logger, $this->taskCRUD),
+            $middlewares
+        );
+        $collector->get(
             'task.get_by_id',
             '/api/task/{id<\d+>}',
             new Task\Get($this->logger, $this->taskCRUD),
@@ -167,12 +183,12 @@ class Application
             new Task\Create($this->logger, $this->taskCRUD, $this->boardCRUD, $this->statusCRUD),
             $middlewares,
         );
-//        $collector->put(
-//            'status.update',
-//            '/api/status/{id<\d+>}',
-//            new Status\Update($this->logger, $this->statusCRUD),
-//            $middlewares,
-//        );
+        $collector->put(
+            'task.update',
+            '/api/task/{id<\d+>}',
+            new Task\Update($this->logger, $this->statusCRUD),
+            $middlewares,
+        );
         $collector->delete(
             'task.delete',
             '/api/task/{id<\d+>}',

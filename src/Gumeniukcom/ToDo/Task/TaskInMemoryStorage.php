@@ -40,17 +40,18 @@ class TaskInMemoryStorage implements TaskStorage
     }
 
     /**
-     * @param Task $entity
+     * @param Task $task
+     * @param int|null $oldStatusId
      * @return bool
      */
-    public function set(Task $entity): bool
+    public function set(Task $task, ?int $oldStatusId = null): bool
     {
-        $key = self::key($entity->getId());
+        $key = self::key($task->getId());
         if (!isset($this->storage[$key])) {
             return false;
         }
 
-        $this->storage[$key] = $entity;
+        $this->storage[$key] = $task;
 
         return true;
     }
@@ -75,13 +76,12 @@ class TaskInMemoryStorage implements TaskStorage
      * @param string $title
      * @param int $boardId
      * @param int $statusId
-     * @param DateTimeImmutable $createdAt
-     * @param DateTime|null $updatedAt
      * @return Task|null
      */
-    public function new(string $title, int $boardId, int $statusId, DateTimeImmutable $createdAt, ?DateTime $updatedAt = null): ?Task
+    public function new(string $title, int $boardId, int $statusId): ?Task
     {
-        $this->storage[self::key(count($this->storage) + 1)] = new Task(count($this->storage) + 1, $title, $boardId, $statusId, $createdAt, $updatedAt);
+        $createdAt = new DateTimeImmutable();
+        $this->storage[self::key(count($this->storage) + 1)] = new Task(count($this->storage) + 1, $title, $boardId, $statusId, $createdAt);
 
         return end($this->storage);
     }

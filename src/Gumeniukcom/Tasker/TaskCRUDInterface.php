@@ -27,10 +27,11 @@ interface TaskCRUDInterface
 
     /**
      * @param Task $task
-     * @param string $title
+     * @param string|null $title
+     * @param int|null $statusId
      * @return bool
      */
-    public function changeTask(Task $task, string $title): bool;
+    public function changeTask(Task $task, ?string $title = null, ?int $statusId = null): bool;
 
     /**
      * @param int $id
@@ -43,4 +44,20 @@ interface TaskCRUDInterface
      * @return bool
      */
     public function deleteTask(Task $task): bool;
+
+    /**
+     * @return Task[]
+     */
+    public function getTaskList(): array;
+
+    /**
+     * @param int $boardId
+     * @return Task[]
+     */
+    public function getTaskListByBoardId(int $boardId): array;
+    /**
+     * @param int $statusId
+     * @return Task[]
+     */
+    public function getTaskListByStatusId(int $statusId): array;
 }

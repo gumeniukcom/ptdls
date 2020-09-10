@@ -7,8 +7,6 @@ namespace Gumeniukcom\ToDo\Task;
 use DateTimeImmutable;
 use DateTime;
 use Gumeniukcom\AbstractService\AbstractIdTitleClass;
-use Gumeniukcom\ToDo\Board\Board;
-use Gumeniukcom\ToDo\Status\Status;
 use JsonSerializable;
 
 final class Task extends AbstractIdTitleClass implements JsonSerializable
@@ -117,6 +115,34 @@ final class Task extends AbstractIdTitleClass implements JsonSerializable
         }
 
         return $data;
+    }
+
+    /**
+     * @param array $arr
+     * @return Task|null
+     * @throws \Exception
+     */
+    public static function fromArray(array $arr): ?Task
+    {
+        if (count($arr) === 0) {
+            return null;
+        }
+
+        $createdAt = new DateTimeImmutable($arr[Task::FIELD_CREATED_AT]);
+
+        $updatedAt = null;
+        if (isset($arr[Task::FIELD_UPDATED_AT])) {
+            $updatedAt = new DateTime($arr[Task::FIELD_UPDATED_AT]);
+        }
+
+        return new self(
+            (int)$arr[Task::FIELD_ID],
+            $arr[Task::FIELD_TITLE],
+            (int)$arr[Task::FIELD_BOARD_ID],
+            (int)$arr[Task::FIELD_STATUS_ID],
+            $createdAt,
+            $updatedAt
+        );
     }
 
 }

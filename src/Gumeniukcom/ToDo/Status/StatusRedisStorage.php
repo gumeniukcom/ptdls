@@ -5,7 +5,6 @@ namespace Gumeniukcom\ToDo\Status;
 
 
 use Gumeniukcom\AbstractService\RedisStorageTrait;
-use Gumeniukcom\ToDo\Board\Board;
 use Psr\Log\LoggerInterface;
 use Redis;
 
@@ -22,7 +21,7 @@ class StatusRedisStorage implements StatusStorage
     use RedisStorageTrait;
 
     /**
-     * BoardInMemoryStorage constructor.
+     * StatusRedisStorage constructor.
      * @param LoggerInterface $logger
      * @param Redis $redis
      */

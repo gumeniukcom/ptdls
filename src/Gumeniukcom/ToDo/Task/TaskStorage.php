@@ -17,9 +17,10 @@ interface TaskStorage
 
     /**
      * @param Task $task
+     * @param int|null $oldStatusId
      * @return bool
      */
-    public function set(Task $task): bool;
+    public function set(Task $task, ?int $oldStatusId = null): bool;
 
     /**
      * @param Task $task
@@ -31,11 +32,9 @@ interface TaskStorage
      * @param string $title
      * @param int $boardId
      * @param int $statusId
-     * @param DateTimeImmutable $createdAt
-     * @param DateTime|null $updatedAt
      * @return Task|null
      */
-    public function new(string $title, int $boardId, int $statusId, DateTimeImmutable $createdAt, ?DateTime $updatedAt = null): ?Task;
+    public function new(string $title, int $boardId, int $statusId): ?Task;
 
     /**
      * @return Task[]
