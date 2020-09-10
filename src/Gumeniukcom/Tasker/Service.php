@@ -98,7 +98,7 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
             return null;
         }
 
-        $task = $this->taskStorage->New($title, $board, $status, $createdAt);
+        $task = $this->taskStorage->new($title, $board->getId(), $status->getId(), $createdAt);
 
         if ($task === null) {
             $this->logger->error("error on get new tasks",
@@ -131,8 +131,8 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
      */
     public function changeTaskStatus(Task $task, Status $status): bool
     {
-        $oldStatus = $task->getStatus();
-        $task->setStatus($status);
+        $oldStatus = $task->getStatusId();
+        $task->setStatusId($status->getId());
 
         try {
             $updatedAt = new \DateTime();
@@ -144,14 +144,14 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
 
         $task->setUpdatedAt($updatedAt);
 
-        $result = $this->taskStorage->Set($task);
+        $result = $this->taskStorage->set($task);
 
         if (!$result) {
             $this->logger->error("failed update task status",
                 [
                     'task_id' => $task->getId(),
                     'new_status_id' => $status->getId(),
-                    'old_status_id' => $oldStatus->getId(),
+                    'old_status_id' => $oldStatus,
                 ]
             );
             return false;
@@ -161,7 +161,7 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
             [
                 'task_id' => $task->getId(),
                 'new_status_id' => $status->getId(),
-                'old_status_id' => $oldStatus->getId(),
+                'old_status_id' => $oldStatus,
             ]
         );
 
@@ -189,7 +189,7 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
 
         $task->setUpdatedAt($updatedAt);
 
-        $result = $this->taskStorage->Set($task);
+        $result = $this->taskStorage->set($task);
 
         if (!$result) {
             $this->logger->error("failed update task",
@@ -219,7 +219,7 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
      */
     public function getTaskById(int $id): ?Task
     {
-        $task = $this->taskStorage->Load($id);
+        $task = $this->taskStorage->load($id);
         if ($task === null) {
             $this->logger->info("task not found by id",
                 [
@@ -243,7 +243,7 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
      */
     public function deleteTask(Task $task): bool
     {
-        $result = $this->taskStorage->Delete($task);
+        $result = $this->taskStorage->delete($task);
 
         if ($result === false) {
             $this->logger->error("error on delete task",

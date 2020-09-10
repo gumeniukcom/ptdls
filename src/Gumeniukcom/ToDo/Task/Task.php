@@ -13,12 +13,16 @@ use JsonSerializable;
 
 final class Task extends AbstractIdTitleClass implements JsonSerializable
 {
+    const FIELD_BOARD_ID = 'board_id';
+    const FIELD_STATUS_ID = 'status_id';
+    const FIELD_CREATED_AT = 'created_at';
+    const FIELD_UPDATED_AT = 'updated_at';
 
-    /** @var Board */
-    private Board $board;
+    /** @var int */
+    private int $boardId;
 
-    /** @var Status */
-    private Status $status;
+    /** @var int */
+    private int $statusId;
 
     /** @var DateTimeImmutable */
     private DateTimeImmutable $createdAt;
@@ -31,16 +35,16 @@ final class Task extends AbstractIdTitleClass implements JsonSerializable
      * Task constructor.
      * @param int $id
      * @param string $title
-     * @param Board $board
-     * @param Status $status
+     * @param int $boardId
+     * @param int $statusId
      * @param DateTimeImmutable $createdAt
      * @param DateTime|null $updatedAt
      */
-    public function __construct(int $id, string $title, Board $board, Status $status, DateTimeImmutable $createdAt, ?DateTime $updatedAt = null)
+    public function __construct(int $id, string $title, int $boardId, int $statusId, DateTimeImmutable $createdAt, ?DateTime $updatedAt = null)
     {
 
-        $this->board = $board;
-        $this->status = $status;
+        $this->boardId = $boardId;
+        $this->statusId = $statusId;
         $this->createdAt = $createdAt;
         $this->updatedAt = $updatedAt;
 
@@ -48,11 +52,11 @@ final class Task extends AbstractIdTitleClass implements JsonSerializable
     }
 
     /**
-     * @return Board
+     * @return int
      */
-    public function getBoard(): Board
+    public function getBoardId(): int
     {
-        return $this->board;
+        return $this->boardId;
     }
 
     /**
@@ -72,11 +76,11 @@ final class Task extends AbstractIdTitleClass implements JsonSerializable
     }
 
     /**
-     * @param Status $status
+     * @param int $statusId
      */
-    public function setStatus(Status $status): void
+    public function setStatusId(int $statusId): void
     {
-        $this->status = $status;
+        $this->statusId = $statusId;
     }
 
     /**
@@ -88,11 +92,11 @@ final class Task extends AbstractIdTitleClass implements JsonSerializable
     }
 
     /**
-     * @return Status
+     * @return int
      */
-    public function getStatus(): Status
+    public function getStatusId(): int
     {
-        return $this->status;
+        return $this->statusId;
     }
 
     /**
@@ -101,15 +105,15 @@ final class Task extends AbstractIdTitleClass implements JsonSerializable
     public function jsonSerialize(): array
     {
         $data = [
-            'id' => $this->getId(),
-            'title' => $this->getTitle(),
-            'board_id' => $this->getBoard()->getId(),
-            'status_id' => $this->getStatus()->getId(),
-            'created_at' => $this->getCreatedAt()->format(DATE_ISO8601),
+            self::FIELD_ID => $this->getId(),
+            self::FIELD_TITLE => $this->getTitle(),
+            self::FIELD_BOARD_ID => $this->getBoardId(),
+            self::FIELD_STATUS_ID => $this->getStatusId(),
+            self::FIELD_CREATED_AT => $this->getCreatedAt()->format(DATE_ISO8601),
         ];
 
         if ($this->getUpdatedAt() !== null) {
-            $data['updated_at'] = $this->getUpdatedAt()->format(DATE_ISO8601);
+            $data[self::FIELD_UPDATED_AT] = $this->getUpdatedAt()->format(DATE_ISO8601);
         }
 
         return $data;

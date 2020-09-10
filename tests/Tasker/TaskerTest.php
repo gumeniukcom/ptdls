@@ -61,7 +61,7 @@ class TaskerTest extends \Codeception\Test\Unit
 
         $this->tester->amGoingTo("Create  change task status to WIP");
         $tasker->changeTaskStatus($task, $statusWIP);
-        $this->assertEquals($statusWIP, $task->getStatus(), "status WIP");
+        $this->assertEquals($statusWIP->getId(), $task->getStatusId(), "status WIP");
 
         $this->tester->amGoingTo("Create change task title to FOOBAR");
         $newTitle = 'FOOBAR';

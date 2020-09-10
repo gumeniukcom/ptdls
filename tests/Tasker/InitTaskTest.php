@@ -30,7 +30,7 @@ class InitTaskTest extends \Codeception\Test\Unit
         $this->tester->amGoingTo("init task instance");
 
         $createdAt = new DateTimeImmutable('now');
-        $task = new \Gumeniukcom\ToDo\Task\Task(1, 'Clean home', $board, $statusNew, $createdAt);
+        $task = new \Gumeniukcom\ToDo\Task\Task(1, 'Clean home', $board->getId(), $statusNew->getId(), $createdAt);
 
         $this->assertInstanceOf(\Gumeniukcom\ToDo\Task\Task::class, $task, '$task is instance of Gumeniukcom\Tasker\Objects\Task');
 
