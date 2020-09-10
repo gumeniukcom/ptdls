@@ -4,6 +4,7 @@
 namespace Gumeniukcom\ToDo\Status;
 
 use Gumeniukcom\AbstractService\InMemoryStorageTrait;
+use Gumeniukcom\ToDo\Board\Board;
 use Psr\Log\LoggerInterface;
 
 class StatusInMemoryStorage implements StatusStorage
@@ -69,11 +70,12 @@ class StatusInMemoryStorage implements StatusStorage
 
     /**
      * @param string $title
+     * @param Board $board
      * @return Status|null
      */
-    public function New(string $title): ?Status
+    public function New(string $title, Board $board): ?Status
     {
-        $this->storage[self::key(count($this->storage) + 1)] = new Status(count($this->storage) + 1, $title);
+        $this->storage[self::key(count($this->storage) + 1)] = new Status(count($this->storage,) + 1, $title, $board);
 
         return end($this->storage);
     }

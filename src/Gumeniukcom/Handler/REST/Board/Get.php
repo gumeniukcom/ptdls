@@ -49,6 +49,6 @@ final class Get implements RequestHandlerInterface
         if ($board === null) {
             return $this->error("Not found", null, null, 404);
         }
-        return $this->json($board, 404);
+        return $this->json($board, 200);
     }
 }

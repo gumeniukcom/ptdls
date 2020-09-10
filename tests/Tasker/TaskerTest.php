@@ -48,11 +48,11 @@ class TaskerTest extends \Codeception\Test\Unit
         $this->assertNotNull($board);
 
         $this->tester->amGoingTo("Create new Status NEW");
-        $statusNew = $tasker->createStatus('NEW');
+        $statusNew = $tasker->createStatus('NEW', $board);
         $this->assertNotNull($statusNew);
 
         $this->tester->amGoingTo("Create new Status WIP");
-        $statusWIP = $tasker->createStatus('WIP');
+        $statusWIP = $tasker->createStatus('WIP', $board);
         $this->assertNotNull($statusWIP);
 
         $this->tester->amGoingTo("Create  new TASK");
@@ -88,11 +88,11 @@ class TaskerTest extends \Codeception\Test\Unit
         $this->assertNotNull($board);
 
         $this->tester->amGoingTo("Create new Status NEW");
-        $statusNew = $tasker->createStatus('NEW');
+        $statusNew = $tasker->createStatus('NEW', $board);
         $this->assertNotNull($statusNew);
 
         $this->tester->amGoingTo("Create new Status WIP");
-        $statusWIP = $tasker->createStatus('WIP');
+        $statusWIP = $tasker->createStatus('WIP', $board);
         $this->assertNotNull($statusWIP);
 
         $this->tester->amGoingTo("Create  new TASK");

@@ -1,4 +1,4 @@
-version: '3.1'
+version: '3.7'
 services:
   app-storage:
     volumes:
@@ -9,18 +9,38 @@ services:
     image: nginx:1.18.0-alpine@sha256:29dc24ed982665eb88598e0129e4ec88c2049fafc63125a4a640dd67529dc6d4
     ports:
       - 8000:80
-    links:
-      - 'app-storage'
-      - 'php'
     volumes:
       - "codevolume:/usr/src/ptdls"
       - ./nginx/site.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - 'app-storage'
+      - 'redis-backend'
+    networks:
+      - backend
+
+  redis-backend:
+    image: redis:6.0.7-alpine3.12@sha256:5326e0af4341affe12c544b546f17e4fcb5db2d9204a83e5c28d8b8a98d69778
+    expose:
+      - 6379
+    networks:
+      - backend
+
   php:
-    image: php:7.4-fpm-alpine3.12@sha256:4c67c85bacbdada12f8ad56888fb6d21c7864f9373d08e804bd66ab19dc9ba24
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile-php
     volumes:
       - "codevolume:/usr/src/ptdls"
+    environment:
+      - REDIS_URL=redis://redis-backend:6379
+    depends_on:
+      - 'app-storage'
+      - 'redis-backend'
+    networks:
+      - backend
 
 volumes:
   codevolume:
+
+networks:
+  backend:

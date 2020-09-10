@@ -50,6 +50,6 @@ final class Get implements RequestHandlerInterface
             $this->logger->error("task not found", ['status_id' => $id]);
             return $this->error("Not found", null, null, 404);
         }
-        return $this->json($task, 404);
+        return $this->json($task, 200);
     }
 }

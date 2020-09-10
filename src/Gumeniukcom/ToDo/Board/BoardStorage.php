@@ -10,23 +10,28 @@ interface BoardStorage
      * @param int $id
      * @return Board|null
      */
-    public function Load(int $id): ?Board;
+    public function load(int $id): ?Board;
 
     /**
      * @param Board $board
      * @return bool
      */
-    public function Set(Board $board): bool;
+    public function set(Board $board): bool;
 
     /**
      * @param Board $board
      * @return bool
      */
-    public function Delete(Board $board): bool;
+    public function delete(Board $board): bool;
 
     /**
      * @param string $title
      * @return Board|null
      */
-    public function New(string $title): ?Board;
+    public function new(string $title): ?Board;
+
+    /**
+     * @return Board[]
+     */
+    public function all() : array;
 }

@@ -47,7 +47,7 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
      */
     public function createBoard(string $title): ?Board
     {
-        $board = $this->boardStorage->New($title);
+        $board = $this->boardStorage->new($title);
         if ($board === null) {
             $this->logger->error("error on get new Board",
                 ['title' => $title]
@@ -63,11 +63,12 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
 
     /**
      * @param string $title
+     * @param Board $board
      * @return Status|null
      */
-    public function createStatus(string $title): ?Status
+    public function createStatus(string $title, Board $board): ?Status
     {
-        $status = $this->statusStorage->New($title);
+        $status = $this->statusStorage->New($title, $board);
         if ($status === null) {
             $this->logger->error("error on get new Status",
                 ['title' => $title]
@@ -262,7 +263,7 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
 
     public function getBoardById(int $id): ?Board
     {
-        $board = $this->boardStorage->Load($id);
+        $board = $this->boardStorage->load($id);
 
         if ($board === null) {
             $this->logger->info("board not found by id",
@@ -287,7 +288,7 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
 
         $board->setTitle($title);
 
-        $result = $this->boardStorage->Set($board);
+        $result = $this->boardStorage->set($board);
 
         if (!$result) {
             $this->logger->error("failed update task",
@@ -317,7 +318,7 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
      */
     public function deleteBoard(Board $board): bool
     {
-        $result = $this->boardStorage->Delete($board);
+        $result = $this->boardStorage->delete($board);
 
         if ($result === false) {
             $this->logger->error("error on delete board",
@@ -417,5 +418,21 @@ class Service implements TaskCRUDInterface, StatusCRUDInterface, BoardCRUDInterf
             ]
         );
         return true;
+    }
+
+    /**
+     * @return Board[]
+     */
+    public function getBoardList(): array
+    {
+        $result = $this->boardStorage->all();
+
+        $this->logger->error("deleted status",
+            [
+                'board_count' => count($result),
+            ]
+        );
+
+        return $result;
     }
 }

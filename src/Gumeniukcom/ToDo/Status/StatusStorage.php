@@ -4,6 +4,8 @@
 namespace Gumeniukcom\ToDo\Status;
 
 
+use Gumeniukcom\ToDo\Board\Board;
+
 interface StatusStorage
 {
     /**
@@ -27,7 +29,8 @@ interface StatusStorage
 
     /**
      * @param string $title
+     * @param Board $board
      * @return Status|null
      */
-    public function New(string $title): ?Status;
+    public function New(string $title, Board $board): ?Status;
 }

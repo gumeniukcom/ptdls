@@ -25,14 +25,20 @@ final class Create implements RequestHandlerInterface
     private StatusCRUDInterface $statusCRUD;
 
     /**
+     * @var BoardCRUDInterface
+     */
+    private BoardCRUDInterface $boardCRUD;
+
+    /**
      * Get constructor.
      * @param LoggerInterface $logger
      * @param StatusCRUDInterface $statusCRUD
      */
-    public function __construct(LoggerInterface $logger, StatusCRUDInterface $statusCRUD)
+    public function __construct(LoggerInterface $logger, StatusCRUDInterface $statusCRUD, BoardCRUDInterface $boardCRUD)
     {
         $this->logger = $logger;
         $this->statusCRUD = $statusCRUD;
+        $this->boardCRUD = $boardCRUD;
     }
 
 
@@ -60,13 +66,25 @@ final class Create implements RequestHandlerInterface
             return $this->error("Empty title", null, null, 400);
         }
 
+        if (!isset($body['board_id'])) {
+            $this->logger->debug("board_id empty");
+            return $this->error("Empty board_id", null, null, 400);
+        }
+
         $title = (string)$body['title'];
+        $boardId = (int)$body['board_id'];
+
+        $board = $this->boardCRUD->getBoardById($boardId);
+        if ($board === null) {
+            $this->logger->debug("board not found", ['board_id' => $boardId]);
+            return $this->error("Board not found", null, null, 400);
+        }
 
         if (strlen($title) < 2) {
             $this->logger->debug("title to short", ['title' => $title]);
             return $this->error("Too short title", null, null, 400);
         }
-        $status = $this->statusCRUD->createStatus($title);
+        $status = $this->statusCRUD->createStatus($title, $board);
         if ($status === null) {
             return $this->error("Error on create", null, null, 500);
         }
@@ -74,6 +92,7 @@ final class Create implements RequestHandlerInterface
             [
                 'title' => $title,
                 'status' => $status,
+                'board_id' => $boardId,
             ]);
         return $this->json($status, 201);
     }

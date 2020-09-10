@@ -13,9 +13,10 @@ interface StatusCRUDInterface
 
     /**
      * @param string $title
+     * @param Board $board
      * @return Status|null
      */
-    public function createStatus(string $title): ?Status;
+    public function createStatus(string $title, Board $board): ?Status;
 
     /**
      * @param int $id

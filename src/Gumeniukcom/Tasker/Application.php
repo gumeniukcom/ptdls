@@ -10,9 +10,11 @@ use Gumeniukcom\Handler\REST\Board;
 use Gumeniukcom\Handler\REST\Status;
 use Gumeniukcom\Handler\REST\Task;
 use Gumeniukcom\ToDo\Board\BoardInMemoryStorage;
+use Gumeniukcom\ToDo\Board\BoardRedisStorage;
 use Gumeniukcom\ToDo\Status\StatusInMemoryStorage;
 use Gumeniukcom\ToDo\Task\TaskInMemoryStorage;
 use Psr\Log\LoggerInterface;
+use Redis;
 use Sunrise\Http\Router\OpenApi\Middleware\RequestBodyValidationMiddleware;
 use Sunrise\Http\Router\OpenApi\Object\Info;
 use Sunrise\Http\Router\OpenApi\OpenApi;
@@ -32,6 +34,7 @@ class Application
 
     private TaskCRUDInterface $taskCRUD;
 
+
     /**
      * Application constructor.
      * @param LoggerInterface $logger
@@ -41,7 +44,24 @@ class Application
 
         $this->logger = $logger;
 
-        $boardStorage = new BoardInMemoryStorage($this->logger);
+        $redis = new Redis();
+
+        $redisUrl = $_ENV['REDIS_URL'];
+        $redisUrlParsed = parse_url($redisUrl);
+        if (!is_array($redisUrlParsed)) {
+            $this->logger->emergency("redis url not parsed", ['redis_url' => $redisUrl]);
+            throw new \Exception("redis url not parsed");
+        }
+
+        $this->logger->debug('try to pconnect redis', ['redis_url_parsed' => $redisUrlParsed]);
+
+        $redisConnected = $redis->pconnect($redisUrlParsed['host'], $redisUrlParsed['port']);
+        if (!$redisConnected) {
+            $this->logger->emergency("redis not connected", ['redis_url' => $redisUrl]);
+            throw new \Exception("redis not connected");
+        }
+
+        $boardStorage = new BoardRedisStorage($this->logger, $redis);
         $statusStorage = new StatusInMemoryStorage($this->logger);
         $taskStorage = new TaskInMemoryStorage($this->logger);
         $tasker = new Service($this->logger, $statusStorage, $boardStorage, $taskStorage);
@@ -49,11 +69,6 @@ class Application
         $this->statusCRUD = $tasker;
         $this->boardCRUD = $tasker;
         $this->taskCRUD = $tasker;
-////
-        $tasker->createBoard("foobar");
-        $tasker->createStatus("New");
-        $tasker->createStatus("WIP");
-        ///
 
 
         $this->initRouter();
@@ -67,6 +82,12 @@ class Application
         $validator = new RequestBodyValidationMiddleware();
         $middlewares = [$validator];
         $collector = new RouteCollector();
+        $collector->get(
+            'board.all',
+            '/api/board/',
+            new Board\All($this->logger, $this->boardCRUD),
+            $middlewares
+        );
         $collector->get(
             'board.get_by_id',
             '/api/board/{id<\d+>}',
@@ -101,7 +122,7 @@ class Application
         $collector->post(
             'status.create',
             '/api/status/',
-            new Status\Create($this->logger, $this->statusCRUD),
+            new Status\Create($this->logger, $this->statusCRUD, $this->boardCRUD),
             $middlewares,
         );
         $collector->put(
@@ -156,31 +177,26 @@ class Application
 
     public function run()
     {
-        try {
-            $request = ServerRequestFactory::fromGlobals();
-            $response = $this->router->handle($request);
-            foreach ($response->getHeaders() as $name => $values) {
-                foreach ($values as $value) {
-                    header(sprintf(
-                        '%s: %s',
-                        $name,
-                        $value
-                    ), false);
-                }
+        $request = ServerRequestFactory::fromGlobals();
+        $response = $this->router->handle($request);
+        foreach ($response->getHeaders() as $name => $values) {
+            foreach ($values as $value) {
+                header(sprintf(
+                    '%s: %s',
+                    $name,
+                    $value
+                ), false);
             }
-
-            header(sprintf(
-                'HTTP/%s %d %s',
-                $response->getProtocolVersion(),
-                $response->getStatusCode(),
-                $response->getReasonPhrase()
-            ), true);
-
-            echo $response->getBody();
-        } catch (\Exception $e) {
-            $this->logger->emergency("some uncatch error", [
-                'e' => $e,
-            ]);
         }
+
+        header(sprintf(
+            'HTTP/%s %d %s',
+            $response->getProtocolVersion(),
+            $response->getStatusCode(),
+            $response->getReasonPhrase()
+        ), true);
+
+        echo $response->getBody();
+
     }
 }

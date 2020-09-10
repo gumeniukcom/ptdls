@@ -23,6 +23,11 @@ interface BoardCRUDInterface
     public function getBoardById(int $id): ?Board;
 
     /**
+     * @return Board[]
+     */
+    public function getBoardList(): array;
+
+    /**
      * @param Board $board
      * @param string $title
      * @return bool

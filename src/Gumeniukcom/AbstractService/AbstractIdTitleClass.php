@@ -7,6 +7,9 @@ namespace Gumeniukcom\AbstractService;
 abstract class AbstractIdTitleClass
 {
 
+    const FIELD_ID = 'id';
+    const FIELD_TITLE = 'title';
+
     /** @var int */
     protected int $id;
 
@@ -50,9 +53,8 @@ abstract class AbstractIdTitleClass
     public function jsonSerialize()
     {
         return [
-            'id' => $this->getId(),
-            'title' => $this->getTitle(),
+            self::FIELD_ID => $this->getId(),
+            self::FIELD_TITLE => $this->getTitle(),
         ];
     }
-
 }

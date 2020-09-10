@@ -1,0 +1,7 @@
+FROM php:7.4-fpm-alpine3.12@sha256:4c67c85bacbdada12f8ad56888fb6d21c7864f9373d08e804bd66ab19dc9ba24
+
+RUN apk add --no-cache $PHPIZE_DEPS \
+    && pecl install redis-5.3.1 \
+    && docker-php-ext-enable redis \
+    && apk del $PHPIZE_DEPS
+
