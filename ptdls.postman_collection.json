@@ -34,12 +34,40 @@
 					"response": []
 				},
 				{
+					"name": "all",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/board/",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"board",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "create",
 					"request": {
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"board2\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{domain}}/api/board/?title=foobar",
+							"raw": "{{domain}}/api/board/",
 							"host": [
 								"{{domain}}"
 							],
@@ -51,7 +79,8 @@
 							"query": [
 								{
 									"key": "title",
-									"value": "foobar"
+									"value": "foobar",
+									"disabled": true
 								}
 							]
 						}
@@ -65,7 +94,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"next\"\n}",
+							"raw": "{\n    \"title\": \"foobar\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -149,12 +178,66 @@
 					"response": []
 				},
 				{
+					"name": "all",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/status/",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"status",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "all by board id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/board/:id/status",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"board",
+								":id",
+								"status"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "create",
 					"request": {
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"status2\",\n    \"board_id\": 2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{domain}}/api/status/?title=foobar",
+							"raw": "{{domain}}/api/status/",
 							"host": [
 								"{{domain}}"
 							],
@@ -166,7 +249,8 @@
 							"query": [
 								{
 									"key": "title",
-									"value": "foobar"
+									"value": "foobar",
+									"disabled": true
 								}
 							]
 						}
@@ -180,7 +264,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"next\"\n}",
+							"raw": "{\n    \"title\": \"status_new\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -248,6 +332,224 @@
 					"listen": "test",
 					"script": {
 						"id": "dcb8651d-7597-409d-9fa2-281e0cfcfd0c",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "task",
+			"item": [
+				{
+					"name": "get",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/task/:id",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"task",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "all",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/status/",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"status",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "all by board id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/board/:id/task",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"board",
+								":id",
+								"task"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "all by status id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/status/:id/task",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"status",
+								":id",
+								"task"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"new task\",\n    \"board_id\": 2,\n    \"status_id\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/task/",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"task",
+								""
+							],
+							"query": [
+								{
+									"key": "title",
+									"value": "foobar",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"next123123123\",\n    \"status_id\":2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/task/:id",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"task",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/status/:id",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"status",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "63ffb10d-285b-490a-b620-8dc28181b513",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "28e0dfe3-1f3d-428f-820e-f19cc17873cc",
 						"type": "text/javascript",
 						"exec": [
 							""

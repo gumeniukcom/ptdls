@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e495d957caa5ca3b5e4353b0194dba30",
+    "content-hash": "1b77f9dfb7a8456572c892d0867a9dff",
     "packages": [
         {
             "name": "arus/http-response-kit",
@@ -5637,7 +5637,8 @@
     "prefer-lowest": false,
     "platform": {
         "php": "^7.4.0",
-        "ext-json": "*"
+        "ext-json": "*",
+        "ext-redis": "*"
     },
     "platform-dev": [],
     "plugin-api-version": "1.1.0"
